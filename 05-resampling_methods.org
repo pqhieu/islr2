@@ -1,0 +1,365 @@
+#+startup: showall inlineimages
+#+property: header-args:R :session *R* :family "Palatino"
+
+
+#+begin_src R :results silent
+library(ISLR2)
+library(boot) # Needed for the cv.glm() function
+#+end_src
+
+* Lab
+** The Validation Set Approach
+We explore the use of the validation set approach in order to estimate the test
+error rates. We begin by using the =sample()= function to split the observations
+into two halves.
+
+#+begin_src R :results silent
+set.seed(1)
+train <- sample(392, 196)
+#+end_src
+
+We then use the =subset= option in =lm()= to fit a linear regression using only the
+training set.
+
+#+begin_src R :results silent
+lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
+#+end_src
+
+We now use the =predict()= function to estimate the response, and use the =mean()=
+function to calculate the MSE.
+
+#+begin_src R :exports both
+mean((mpg - predict(lm.fit, Auto))[-train]^2)
+#+end_src
+
+#+results:
+: 23.2660086465003
+
+We can use the =poly()= function to estimate the test error for the quadratic
+regression.
+
+#+begin_src R :exports both
+lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
+mean((mpg - predict(lm.fit2, Auto))[-train]^2)
+#+end_src
+
+#+results:
+: 18.7164594933828
+
+** Leave-One-Out Cross-Validation
+The leave-one-out cross-validation (LOOCV) estimate can be automatically
+computed using the =glm()= and =cv.glm()= functions. For instance
+
+#+begin_src R :exports both
+glm.fit <- glm(mpg ~ horsepower, data = Auto)
+cv.err <- cv.glm(Auto, glm.fit)
+cv.err$delta
+#+end_src
+
+#+results:
+| 24.2315135179292 |
+| 24.2311440937562 |
+
+The two numbers in the =delta= vector contain the cross-validation results.
+
+We can repeat this procedure for complex polynomial fits using the =for()=
+function.
+
+#+begin_src R :exports both
+cv.error <- rep(0, 10)
+for (i in 1:10) {
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error[i] <- cv.glm(Auto, glm.fit)$delta[1]
+}
+cv.error
+#+end_src
+
+#+results:
+| 24.2315135179292 |
+| 19.2482131244897 |
+|  19.334984064029 |
+| 19.4244303104302 |
+| 19.0332138547041 |
+| 18.9786436582254 |
+| 18.8330450653182 |
+| 18.9611507120531 |
+|   19.06862998146 |
+| 19.4909322993298 |
+
+We see a sharp drop in the estimated test MSE between the linear and quadratic
+fits, but there is no clear improvement from using higher-order polynomials
+
+** k-Fold Cross-Validation
+The =cv.glm()= function can also be used to implement k-fold cross-validation.
+
+#+begin_src R :exports both
+cv.error.10 <- rep(0, 10)
+for (i in 1:10) {
+  glm.fit <- glm(mpg ~ poly(horsepower, i), data = Auto)
+  cv.error.10[i] <- cv.glm(Auto, glm.fit, K = 10)$delta[1]
+}
+cv.error.10
+#+end_src
+
+#+results:
+|  24.174106644063 |
+| 19.3392127587751 |
+| 19.4756196456082 |
+|  19.552793501727 |
+| 19.2981575064366 |
+| 19.0198930277116 |
+| 19.1999443862385 |
+| 19.5702964910836 |
+| 19.1010277249683 |
+| 19.6422392644815 |
+
+We still see little evidence that using cubic or higher-order polynomials leads
+to lower test error than simply using a quadratic fit.
+
+** The Bootstrap
+One of the advantages of the bootstrap approach is that it can be applied in
+almost all situations. Performing a bootstrap analysis in =R= entails two steps.
+First, we create a function that computes that statistic of interest. Second, we
+use the =boot()= function, to perform the bootstrap by repeatedly sampling
+observations from the data set with replacement.
+
+#+begin_src R :results silent
+alpha.fn <- function(data, index) {
+  X <- data$X[index]
+  Y <- data$Y[index]
+  (var(Y) - cov(X, Y)) / (var(X) + var(Y) - 2 * cov(X, Y))
+}
+#+end_src
+
+This function returns an estimate for $\alpha$ based on applying this equation
+
+$$
+\alpha = \frac{\sigma^2_Y - \sigma_{XY}}{\sigma^2_X + \sigma^2_Y - 2\sigma_{XY}}
+$$
+
+to the observations indexed by the argument =index=.
+
+We can implement a bootstrap analysis by using the =boot()= function.
+
+#+begin_src R :results silent
+boot(Portfolio, alpha.fn, R = 1000)
+#+end_src
+
+The bootstrap approach can also be used to assess the variablity of the
+coefficients from a statistical learning method. We first create a simple
+function =boot.fn()=, which takes in the =Auto= data set as well as a set of indices
+for the observations, and returns the intercept and slope.
+
+#+begin_src R :exports both
+boot.fn <- function(data, index) {
+  coef(lm(mpg ~ horsepower, data = data, subset = index))
+}
+boot.fn(Auto, 1:392)
+#+end_src
+
+#+results:
+|   39.9358610211705 |
+| -0.157844733353654 |
+
+The =boot.fn()= function can also be used in order to create bootstrap esimates
+for the intercept and slope terms by randomly sampling from the data set.
+
+#+begin_src R :exports both
+set.seed(1)
+boot.fn(Auto, sample(392, 392, replace = T))
+#+end_src
+
+#+results:
+|   40.3404516830189 |
+| -0.163486837689938 |
+
+Next, we use the =boot()= function to compute the standard errors of 1000
+bootstrap estimates for the intercept and slope terms.
+
+#+begin_src R :results silent
+boot(Auto, boot.fn, R = 1000)
+#+end_src
+
+Standard formulas can be used to compute the standard errors for the regressions
+coefficients in a linear model with the =summary()= function.
+
+#+begin_src R :exports both
+summary(lm(mpg ~ horsepower, data = Auto))$coef
+#+end_src
+
+#+results:
+|   39.9358610211705 |   0.717498655554526 |  55.6598409098141 | 1.22036159610498e-187 |
+| -0.157844733353654 | 0.00644550051768504 | -24.4891351603436 |  7.03198902940366e-81 |
+
+This is somewhat different from the estimates obtained using the bootstrap. This
+is because the standard formulas rely on certain assumptions. For example, they
+depend on the unknown parameter $\sigma^2$, the noise variance. Since there is a
+non-linear relationship in the data, the residuals from a linear fit will be
+inflated, and so will $\sigma^2$. In addition, the standard formulas assume that the
+$x_i$ are fixed, and all the variability comes from the variation in the errors
+$\epsilon_i$. The bootstrap approach does not rely on any of these assumptions, and so
+it is more likely to give a more accurate esimate of the standard errors.
+* Exercises
+** 2
+*** a
+$1-1/n$
+*** b
+$(1-1/n)^2$
+*** c
+Because we are sampling with replacement, the probability that the $j$-th
+observation is not in the bootstrap sample after one sample is $1-1/n$. We need
+to pick $n$ samples, so the final probability is $(1-1/n)^n$.
+*** d
+$1 - (1-1/5)^5 = 67.2\%$
+*** e
+$1 - (1 - 1/100)^{100} = 63.4\%$
+*** f
+$1 - (1 - 1/10000)^{10000} = 63.2\%$
+*** g
+#+begin_src R :results output file graphics :file assets/ch05/e2b.svg :exports both :width 4 :height 5
+pr = function(n) return(1 - (1 - 1 / n)^n)
+x = seq(1, 1e+05, 10)
+plot(x, pr(x))
+#+end_src
+
+#+results:
+[[file:assets/ch05/e2b.svg]]
+
+The probability quickly reaches an asymptote of about 63.2%.
+*** h
+#+begin_src R :exports both
+store <- rep(NA, 10000)
+for (i in 1:10000) {
+  store[i] <- sum(sample(1:100, rep=TRUE) == 4) > 0
+}
+mean(store)
+#+end_src
+
+#+results:
+: 0.6385
+The probability varies a little compared to the analytical result.
+** 3
+*** a
+k-fold cross-validation is implemented by dividing the observations into $k$
+non-overlapping groups, then average the test error rate over $k$ runs.
+*** b
+The validation set approach is simple to implement but suffer from high bias due
+to the dependent on randomness. On the other hand, the LOOCV method is an
+extreme version of k-fold cross validation where $k = n$. It is more computation
+intensive, but has lower bias compared to k-fold CV.
+** 4
+We can use the bootstrap to estimate the standard deviation by sampling
+different training set with replacement and fit a predictor every time. Then we
+can calculate the standard deviation from the responses of these runs.
+** 5
+*** a
+#+begin_src R :results silent
+set.seed(42)
+glm.fit = glm(default ~ income + balance, data = Default, family = binomial)
+#+end_src
+*** b
+#+begin_src R :exports both
+val.fn <- function() {
+  train <- sample(dim(Default)[1], dim(Default)[1] / 2)
+  glm.fit = glm(default ~ income + balance, data = Default, family = binomial, subset = train)
+  glm.pred = rep("No", dim(Default)[1] / 2)
+  glm.probs = predict(glm.fit, Default[-train,], type = "response")
+  glm.pred[glm.probs > 0.5] = "Yes"
+
+  return(mean(glm.pred != Default[-train,]$default))
+}
+val.fn()
+#+end_src
+
+#+results:
+: 0.0256
+*** c
+#+begin_src R :exports both
+errors <- rep(NA, 3)
+for (i in 1:3) {
+  errors[i] <- val.fn()
+}
+errors
+#+end_src
+
+#+results:
+| 0.0288 |
+|  0.027 |
+|  0.027 |
+It seems to be average around 2.5% test error rate.
+*** d
+#+begin_src R :exports both
+train <- sample(dim(Default)[1], dim(Default)[1] / 2)
+glm.fit = glm(default ~ income + balance + student, data = Default, family = binomial, subset = train)
+glm.pred = rep("No", dim(Default)[1] / 2)
+glm.probs = predict(glm.fit, Default[-train,], type = "response")
+glm.pred[glm.probs > 0.5] = "Yes"
+mean(glm.pred != Default[-train,]$default)
+#+end_src
+
+#+results:
+: 0.0272
+Including a dummy variable =student= doesn't affect the test error rate.
+** 6
+*** a
+#+begin_src R :results output :exports both
+glm.fit <- glm(default ~ income + balance, data = Default, family = binomial)
+summary(glm.fit)
+#+end_src
+
+#+results:
+#+begin_example
+
+Call:
+glm(formula = default ~ income + balance, family = binomial,
+    data = Default)
+
+Deviance Residuals:
+    Min       1Q   Median       3Q      Max
+-2.4725  -0.1444  -0.0574  -0.0211   3.7245
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)
+(Intercept) -1.154e+01  4.348e-01 -26.545  < 2e-16 ***
+income       2.081e-05  4.985e-06   4.174 2.99e-05 ***
+balance      5.647e-03  2.274e-04  24.836  < 2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 2920.6  on 9999  degrees of freedom
+Residual deviance: 1579.0  on 9997  degrees of freedom
+AIC: 1585
+
+Number of Fisher Scoring iterations: 8
+#+end_example
+*** b
+#+begin_src R :results silent
+boot.fn <- function(data, index) {
+  coef(glm(default ~ income + balance, data = data, subset = index, family = binomial))
+}
+#+end_src
+*** c
+#+begin_src R :results output :exports both
+boot(Default, boot.fn, R = 50)
+#+end_src
+
+#+results:
+#+begin_example
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = Default, statistic = boot.fn, R = 50)
+
+
+Bootstrap Statistics :
+         original        bias     std. error
+t1* -1.154047e+01 -1.802347e-02 4.345354e-01
+t2*  2.080898e-05  1.638104e-07 4.512262e-06
+t3*  5.647103e-03  5.419313e-06 2.256626e-04
+#+end_example
+*** d
+The two approaches give similar results.

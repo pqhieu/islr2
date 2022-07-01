@@ -1,0 +1,222 @@
+#+startup: showall inlineimages
+#+property: header-args:R :session *R* :family "Palatino"
+
+#+begin_src R :results silent
+library(ISLR2)
+library(leaps)  # Needed for best subset selection
+library(glmnet)  # Needed for ridge regression and the lasso
+#+end_src
+
+* Lab
+** Subset Selection Methods
+*** Best Subset Selection
+Here we apply the best subset selection approach to the =Hitters= data. We notice
+that the =Salary= variable is missing for some of the players. We can use the
+=is.na()= and =na.omit()= functions to identify and remove rows that have missing
+values.
+
+#+begin_src R :results output :exports both
+dim(Hitters)
+sum(is.na(Hitters$Salary))
+Hitters <- na.omit(Hitters)
+dim(Hitters)
+#+end_src
+
+#+RESULTS:
+: [1] 322  20
+: [1] 59
+: [1] 263  20
+
+The =regsubsets()= function performs best subset selection, where best is
+quantified using RSS.
+
+#+begin_src R :results output :exports both
+regfit.full <- regsubsets(Salary ~ ., data = Hitters, nvmax = 19)
+reg.summary <- summary(regfit.full)
+reg.summary
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Subset selection object
+Call: regsubsets.formula(Salary ~ ., data = Hitters, nvmax = 19)
+19 Variables  (and intercept)
+           Forced in Forced out
+AtBat          FALSE      FALSE
+Hits           FALSE      FALSE
+HmRun          FALSE      FALSE
+Runs           FALSE      FALSE
+RBI            FALSE      FALSE
+Walks          FALSE      FALSE
+Years          FALSE      FALSE
+CAtBat         FALSE      FALSE
+CHits          FALSE      FALSE
+CHmRun         FALSE      FALSE
+CRuns          FALSE      FALSE
+CRBI           FALSE      FALSE
+CWalks         FALSE      FALSE
+LeagueN        FALSE      FALSE
+DivisionW      FALSE      FALSE
+PutOuts        FALSE      FALSE
+Assists        FALSE      FALSE
+Errors         FALSE      FALSE
+NewLeagueN     FALSE      FALSE
+1 subsets of each size up to 19
+Selection Algorithm: exhaustive
+          AtBat Hits HmRun Runs RBI Walks Years CAtBat CHits CHmRun CRuns CRBI
+1  ( 1 )  " "   " "  " "   " "  " " " "   " "   " "    " "   " "    " "   "*"
+2  ( 1 )  " "   "*"  " "   " "  " " " "   " "   " "    " "   " "    " "   "*"
+3  ( 1 )  " "   "*"  " "   " "  " " " "   " "   " "    " "   " "    " "   "*"
+4  ( 1 )  " "   "*"  " "   " "  " " " "   " "   " "    " "   " "    " "   "*"
+5  ( 1 )  "*"   "*"  " "   " "  " " " "   " "   " "    " "   " "    " "   "*"
+6  ( 1 )  "*"   "*"  " "   " "  " " "*"   " "   " "    " "   " "    " "   "*"
+7  ( 1 )  " "   "*"  " "   " "  " " "*"   " "   "*"    "*"   "*"    " "   " "
+8  ( 1 )  "*"   "*"  " "   " "  " " "*"   " "   " "    " "   "*"    "*"   " "
+9  ( 1 )  "*"   "*"  " "   " "  " " "*"   " "   "*"    " "   " "    "*"   "*"
+10  ( 1 ) "*"   "*"  " "   " "  " " "*"   " "   "*"    " "   " "    "*"   "*"
+11  ( 1 ) "*"   "*"  " "   " "  " " "*"   " "   "*"    " "   " "    "*"   "*"
+12  ( 1 ) "*"   "*"  " "   "*"  " " "*"   " "   "*"    " "   " "    "*"   "*"
+13  ( 1 ) "*"   "*"  " "   "*"  " " "*"   " "   "*"    " "   " "    "*"   "*"
+14  ( 1 ) "*"   "*"  "*"   "*"  " " "*"   " "   "*"    " "   " "    "*"   "*"
+15  ( 1 ) "*"   "*"  "*"   "*"  " " "*"   " "   "*"    "*"   " "    "*"   "*"
+16  ( 1 ) "*"   "*"  "*"   "*"  "*" "*"   " "   "*"    "*"   " "    "*"   "*"
+17  ( 1 ) "*"   "*"  "*"   "*"  "*" "*"   " "   "*"    "*"   " "    "*"   "*"
+18  ( 1 ) "*"   "*"  "*"   "*"  "*" "*"   "*"   "*"    "*"   " "    "*"   "*"
+19  ( 1 ) "*"   "*"  "*"   "*"  "*" "*"   "*"   "*"    "*"   "*"    "*"   "*"
+          CWalks LeagueN DivisionW PutOuts Assists Errors NewLeagueN
+1  ( 1 )  " "    " "     " "       " "     " "     " "    " "
+2  ( 1 )  " "    " "     " "       " "     " "     " "    " "
+3  ( 1 )  " "    " "     " "       "*"     " "     " "    " "
+4  ( 1 )  " "    " "     "*"       "*"     " "     " "    " "
+5  ( 1 )  " "    " "     "*"       "*"     " "     " "    " "
+6  ( 1 )  " "    " "     "*"       "*"     " "     " "    " "
+7  ( 1 )  " "    " "     "*"       "*"     " "     " "    " "
+8  ( 1 )  "*"    " "     "*"       "*"     " "     " "    " "
+9  ( 1 )  "*"    " "     "*"       "*"     " "     " "    " "
+10  ( 1 ) "*"    " "     "*"       "*"     "*"     " "    " "
+11  ( 1 ) "*"    "*"     "*"       "*"     "*"     " "    " "
+12  ( 1 ) "*"    "*"     "*"       "*"     "*"     " "    " "
+13  ( 1 ) "*"    "*"     "*"       "*"     "*"     "*"    " "
+14  ( 1 ) "*"    "*"     "*"       "*"     "*"     "*"    " "
+15  ( 1 ) "*"    "*"     "*"       "*"     "*"     "*"    " "
+16  ( 1 ) "*"    "*"     "*"       "*"     "*"     "*"    " "
+17  ( 1 ) "*"    "*"     "*"       "*"     "*"     "*"    "*"
+18  ( 1 ) "*"    "*"     "*"       "*"     "*"     "*"    "*"
+19  ( 1 ) "*"    "*"     "*"       "*"     "*"     "*"    "*"
+#+end_example
+
+An asterisk indicates that a given variable is included in the model. By
+default, =regsubsets()= only reports results up to the best eight-variable
+model. But the =nvmax= option can be used in order to return as many variable as
+desired.
+
+Plotting RSS, adjusted $R^2$, $C_p$, and BIC for all of the models will help us
+decide which model to select. The =regsubsets()= function has a built-in =plot()=
+command which can be used to display the selected variables for the best model
+with a given number of predictors.
+
+#+begin_src R :results output file graphics :file assets/ch06/subset.svg :exports both :width 4 :height 5
+plot(regfit.full, scale = "adjr2")
+#+end_src
+
+#+RESULTS:
+[[file:assets/ch06/subset.svg]]
+** Ridge Regression and the Lasso
+We will now perform ridge regression and the lasso in order to predict =Salary= on
+the =Hitters= data.
+
+#+begin_src R :results silent
+x <- model.matrix(Salary ~ ., Hitters)[, -1]
+y <- Hitters$Salary
+#+end_src
+
+*** Ridge Regression
+The =glmnet()= function has an =alpha= argument that determines what type of model
+is fit. If =alpha=0= then a ridge regression model is fit, and if =alpha=1= then a
+lasso model is fit.
+
+By default the =glmnet()= function performs ridge regression for an automatically
+selected range of $\lambda$ values. Associated with each value of $\lambda$ is a vector of
+ridge regression coefficients.
+
+#+begin_src R :results output :exports both
+grid <- 10^seq(10, -2, length = 100)
+ridge.mod <- glmnet(x, y, alpha = 0, lambda = grid)
+dim(coef(ridge.mod))
+#+end_src
+
+#+RESULTS:
+: [1]  20 100
+
+We now split the samples into a training set and a test set in order to estimate
+the test error. In general, it would be better to use cross-validation to choose
+the tuning paramter $\lambda$.
+
+#+begin_src R :results output file graphics :file assets/ch06/ridge.svg :exports both :width 4 :height 5
+set.seed(1)
+train <- sample(1:nrow(x), nrow(x) / 2)
+test <- (-train)
+y.test <- y[test]
+
+set.seed(1)
+cv.out <- cv.glmnet(x[train,], y[train], alpha = 0)
+plot(cv.out)
+#+end_src
+
+#+RESULTS:
+[[file:assets/ch06/ridge.svg]]
+
+Finally, we refit our ridge regression model on the full dataset, using the $\lambda$
+value chose by cross-validation, and examine the coefficient estimates.
+
+#+begin_src R :results output :exports both
+bestlam <- cv.out$lambda.min
+out <- glmnet(x, y, alpha = 0)
+predict(out, type = "coefficients", s = bestlam)[1:20, ]
+#+end_src
+
+#+RESULTS:
+:  (Intercept)        AtBat         Hits        HmRun         Runs          RBI
+:  15.44383120   0.07715547   0.85911582   0.60103106   1.06369007   0.87936105
+:        Walks        Years       CAtBat        CHits       CHmRun        CRuns
+:   1.62444617   1.35254778   0.01134999   0.05746654   0.40680157   0.11456224
+:         CRBI       CWalks      LeagueN    DivisionW      PutOuts      Assists
+:   0.12116504   0.05299202  22.09143197 -79.04032656   0.16619903   0.02941950
+:       Errors   NewLeagueN
+:  -1.36092945   9.12487765
+
+As expected, none of the coefficients are zero --- ridge regression does not
+perform variable selection.
+
+*** The Lasso
+We now ask whether the lasso can yield either a more accurate or a more
+interpretable model than ridge regression.
+
+#+begin_src R :results output file graphics :file assets/ch06/lasso.svg :exports both :width 4 :height 5
+lasso.mod <- glmnet(x[train, ], y[train], alpha = 1, lambda = grid)
+plot(lasso.mod)
+#+end_src
+
+#+RESULTS:
+[[file:assets/ch06/lasso.svg]]
+
+The lasso has a substaintial advantage over ridge regression in that the
+resulting coefficient estimates are sparse.
+
+#+begin_src R :results output :exports both
+set.seed(1)
+cv.out <- cv.glmnet(x[train,], y[train], alpha = 1)
+bestlam <- cv.out$lambda.min
+out <- glmnet(x, y, alpha = 1, lambda = grid)
+predict(out, type = "coefficients", s = bestlam)[1:20, ]
+#+end_src
+
+#+RESULTS:
+:   (Intercept)         AtBat          Hits         HmRun          Runs
+:    1.27479059   -0.05497143    2.18034583    0.00000000    0.00000000
+:           RBI         Walks         Years        CAtBat         CHits
+:    0.00000000    2.29192406   -0.33806109    0.00000000    0.00000000
+:        CHmRun         CRuns          CRBI        CWalks       LeagueN
+:    0.02825013    0.21628385    0.41712537    0.00000000   20.28615023
+:     DivisionW       PutOuts       Assists        Errors    NewLeagueN
+: -116.16755870    0.23752385    0.00000000   -0.85629148    0.00000000
