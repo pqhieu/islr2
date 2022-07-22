@@ -1,5 +1,5 @@
 #+startup: showall inlineimages
-#+property: header-args:R :session *R* :family "Palatino"
+#+property: header-args:R :session *R* :family "Concourse 3"
 
 #+begin_src R :results silent
 library(ISLR2)
