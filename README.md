@@ -1,5 +1,9 @@
 # Introduction to Statistical Learning
 
+> Here lies the exercise solutions of the book "Introduction to Statistical
+> Learning with Applications in R, 2nd edition", written in interactive notebook
+> format using `org-babel` feature of [org mode](https://orgmode.org).
+
 ## Solutions
 ### [Chapter 5](05-resampling_methods.org)
 - [x] Lab
