@@ -216,7 +216,7 @@ $1 - (1 - 1/100)^{100} = 63.4\%$
 *** f
 $1 - (1 - 1/10000)^{10000} = 63.2\%$
 *** g
-#+begin_src R :results output file graphics :file assets/ch05/e2b.svg :exports both :width 4 :height 5
+#+begin_src R :results output file graphics :file assets/ch05/e2b.svg :exports both :width 4 :height 4
 pr = function(n) return(1 - (1 - 1 / n)^n)
 x = seq(1, 1e+05, 10)
 plot(x, pr(x))
