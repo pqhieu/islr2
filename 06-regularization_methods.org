@@ -342,3 +342,56 @@ mean((pls.pred - y.test)^2)
 : [1] 151995.3
 
 The test MSE is slightly higher than ridge regression, the lasso, and PCR.
+
+* Exercises
+** 1
+*** a
+The best subset selection model has the smallest training RSS since it tries
+every combination of predictors during training.
+*** b
+We don't know the answer since having the smallest training RSS does not
+guarantee having the smallest test RSS.
+*** c
+- (i) True.
+- (ii) True.
+- (iii) False.
+- (iv) False.
+- (v) False.
+** 2
+*** a
+(iii) less flexible and better predictions because less variance, more bias.
+*** b
+(iii) same as the lasso.
+*** c
+(ii) more flexible, less bias and more variance.
+** 3
+*** a
+(iv) Decrease steadily. The training error at $s=0$ is the maximum and will
+decrease as we relax the constraint.
+*** b
+(ii) Decrease initially, and then start increasing in an U-shape. When $s=0$,
+the model is underfit to the data and has high test RSS. As we increase $s$, the
+model will start fitting well and eventually become overfit to the data.
+*** c
+(iii) Increase steadily. When $s=0$, the model has almost no variance. As we
+increase $s$, the variance will keep increasing and the model becomes highly
+dependent on the data.
+*** d
+(iv) Decrease steadily. The bias of the model when $s=0$ is the highest.
+*** e
+(v) Remain constant. The irreducible error is model independent.
+** 4
+*** a
+(iv) Increase steadily. The training error when $\lambda=0$ is the lowest.
+*** b
+(ii) Decrease initially, and then start increasing in an U-shape. The model
+overfits to the data in the beginning, then start fitting well and eventually
+become underfit to the data as we increase $\lambda$.
+*** c
+(iv) Decrease steadily. When $\lambda=0$, the coefficients are heavily dependent on
+the data, hence high variance. When we increase $\lambda$, the variance will gradually
+decrease to 0.
+*** d
+(iii) Increase steadily. The bias of the model when $\lambda=0$ is the lowest.
+*** e
+(v) Remain constant. The irreducible error is model independent.
