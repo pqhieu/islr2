@@ -1,8 +1,8 @@
 # Introduction to Statistical Learning
 
-> Here lies the exercise solutions of the book "Introduction to Statistical
-> Learning with Applications in R, 2nd edition", written in interactive notebook
-> format using `org-babel` feature of [org mode](https://orgmode.org).
+> Exercise solutions of the book "Introduction to Statistical Learning with
+> Applications in R, 2nd edition", written in interactive notebook format using
+> `org-babel` feature of [org mode](https://orgmode.org).
 
 ## Solutions
 ### [Chapter 5](05-resampling_methods.org)
@@ -28,10 +28,10 @@
   - [x] Ridge regression and the lasso
   - [x] PCR and PLS regression
 - [ ] Exercises
-  - [ ] Exercise 1
-  - [ ] Exercise 2
-  - [ ] Exercise 3
-  - [ ] Exercise 4
+  - [x] Exercise 1
+  - [x] Exercise 2
+  - [x] Exercise 3
+  - [x] Exercise 4
   - [ ] Exercise 5
   - [ ] Exercise 6
   - [ ] Exercise 7
