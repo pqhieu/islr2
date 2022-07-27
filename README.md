@@ -22,7 +22,7 @@
   - [ ] Exercise 8
   - [ ] Exercise 9
 
-## [Chapter 6](06-regularization_methods.org)
+### [Chapter 6](06-regularization_methods.org)
 - [x] Lab
   - [x] Subset selection methods
   - [x] Ridge regression and the lasso
