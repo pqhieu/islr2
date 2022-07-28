@@ -397,7 +397,14 @@ decrease to 0.
 (v) Remain constant. The irreducible error is model independent.
 ** 5
 *** a
-$(y_1 - \hat{\beta_1}x_{11} - \hat{\beta_2}x_{12})^2 + (y_2 - \hat{\beta_2}x_{21} - \hat{\beta_2}x_{22})^2 + \lambda(\hat{\beta_1}^2 + \hat{\beta_2}^2)$
+Minimize
+
+$$
+(y_1 - \hat{\beta_1}x_{11} - \hat{\beta_2}x_{12})^2 + (y_2 - \hat{\beta_2}x_{21} - \hat{\beta_2}x_{22})^2 + \lambda(\hat{\beta_1}^2 + \hat{\beta_2}^2).
+$$
+
+** 6
+** 7
 ** 8
 *** a
 #+begin_src R :results silent
@@ -470,3 +477,5 @@ poly(x, 10, raw = T)10 .
 #+end_example
 
 The lasso prefers low polynomial coefficients, i.e. $X$, $X^2$, and $X^3$.
+** 9
+** 10
