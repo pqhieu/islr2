@@ -37,5 +37,5 @@
   - [ ] Exercise 7
   - [ ] Exercise 8
   - [ ] Exercise 9
-  - [ ] Exercise 10
+  - [x] Exercise 10
   - [ ] Exercise 11

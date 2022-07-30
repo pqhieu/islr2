@@ -479,3 +479,75 @@ poly(x, 10, raw = T)10 .
 The lasso prefers low polynomial coefficients, i.e. $X$, $X^2$, and $X^3$.
 ** 9
 ** 10
+*** a
+#+begin_src R :results silent
+set.seed(1)
+p <- 20
+n <- 1000
+x <- matrix(rnorm(n * p), n, p)
+beta <- rnorm(p)
+beta[2] <- 0
+beta[4] <- 0
+beta[9] <- 0
+eps <- rnorm(p)
+y <- x %*% beta + eps
+#+end_src
+*** b
+#+begin_src R :results silent
+train <- sample(seq(1000), 100, replace = FALSE)
+y.train <- y[train, ]
+y.test <- y[-train, ]
+x.train <- x[train, ]
+x.test <- x[-train, ]
+#+end_src
+*** c
+#+begin_src R :results output file graphics :file assets/ch06/e10c.svg :exports both :width 4 :height 4
+regfit.full <- regsubsets(y ~ ., data = data.frame(x = x.train, y = y.train), nvmax = p)
+errors.val <- rep(NA, p)
+cols <- colnames(x, do.NULL = FALSE, prefix = "x.")
+for (i in 1:p) {
+    coefi <- coef(regfit.full, id = i)
+    pred <- as.matrix(x.train[, cols %in% names(coefi)]) %*% coefi[names(coefi) %in% cols]
+    errors.val[i] <- mean((y.train - pred)^2)
+}
+plot(errors.val, ylab = "Train MSE", pch = 19, type = "b")
+#+end_src
+
+#+RESULTS:
+[[file:assets/ch06/e10c.svg]]
+*** d
+#+begin_src R :results output file graphics :file assets/ch06/e10d.svg :exports both :width 4 :height 4
+errors.val <- rep(NA, p)
+for (i in 1:p) {
+    coefi <- coef(regfit.full, id = i)
+    pred <- as.matrix(x.test[, cols %in% names(coefi)]) %*% coefi[names(coefi) %in% cols]
+    errors.val[i] <- mean((y.test - pred)^2)
+}
+plot(errors.val, ylab = "Test MSE", pch = 19, type = "b")
+#+end_src
+
+#+RESULTS:
+[[file:assets/ch06/e10d.svg]]
+*** e
+#+begin_src R :results output :exports both
+which.min(errors.val)
+#+end_src
+
+#+RESULTS:
+: [1] 17
+
+The model with 17 predictors has the smallest MSE, equal to the original data.
+*** f
+#+begin_src R :results output :exports both
+coef(regfit.full, id = 17)
+#+end_src
+
+#+RESULTS:
+: (Intercept)         x.1         x.3         x.5         x.6         x.7
+: -0.06073059  0.17997121 -0.67254439  0.92590972 -0.24629392 -1.39888688
+:         x.8        x.10        x.11        x.12        x.13        x.14
+:  0.79153372  0.77727294  0.83702056  0.61583171 -0.44087356 -0.84020601
+:        x.15        x.16        x.17        x.18        x.19        x.20
+: -0.68448585 -0.31047611  0.40764020  1.78899142  0.90020756 -0.97711842
+
+The model is similar to the true underlying model used to generate the data.

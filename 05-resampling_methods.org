@@ -245,7 +245,7 @@ non-overlapping groups, then average the test error rate over $k$ runs.
 *** b
 The validation set approach is simple to implement but suffer from high bias due
 to the dependent on randomness. On the other hand, the LOOCV method is an
-extreme version of k-fold cross validation where $k = n$. It is more computation
+extreme version of k-fold cross validation where $k=n$. It is more computation
 intensive, but has lower bias compared to k-fold CV.
 ** 4
 We can use the bootstrap to estimate the standard deviation by sampling
