@@ -3,9 +3,9 @@
 
 #+begin_src R :results silent
 library(ISLR2)
-library(leaps)  # For best subset selection
-library(glmnet)  # For ridge regression and the lasso
-library(pls)   # For principal components regression
+library(leaps)
+library(glmnet)
+library(pls)
 #+end_src
 
 * Lab

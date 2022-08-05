@@ -4,7 +4,7 @@
 
 #+begin_src R :results silent
 library(ISLR2)
-library(boot) # Needed for the cv.glm() function
+library(boot)
 #+end_src
 
 * Lab
