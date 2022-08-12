@@ -1,0 +1,80 @@
+#+startup: showall inlineimages
+#+property: header-args:R :session *R* :family "Concourse 3"
+
+#+begin_src R :results silent
+library(ISLR2)
+attach(Wage)
+#+end_src
+
+* Lab
+** Polynomial Regression and Step Functions
+We first fit a linear model using a fourth-degree polynomial.
+
+#+begin_src R :results output :exports both
+fit <- lm(wage ~ poly(age, 4), data = Wage)
+coef(summary(fit))
+#+end_src
+
+#+RESULTS:
+:                 Estimate Std. Error    t value     Pr(>|t|)
+: (Intercept)    111.70361  0.7287409 153.283015 0.000000e+00
+: poly(age, 4)1  447.06785 39.9147851  11.200558 1.484604e-28
+: poly(age, 4)2 -478.31581 39.9147851 -11.983424 2.355831e-32
+: poly(age, 4)3  125.52169 39.9147851   3.144742 1.678622e-03
+: poly(age, 4)4  -77.91118 39.9147851  -1.951938 5.103865e-02
+
+We now create a grid of values for =age= at which we want predictions, and then
+call then call then call the generic =predict()= function.
+
+#+begin_src R :results silent
+agelims <- range(age)
+age.grid <- seq(from = agelims[1], to = agelims[2])
+preds <- predict(fit, newdata = list(age = age.grid), se = TRUE)
+se.bands <- cbind(preds$fit + 2 * preds$se.fit, preds$fit - 2 * preds$se.fit)
+#+end_src
+
+Finally, we plot the data and add the fit from the degree-4 polynomial.
+
+#+begin_src R :results output file graphics :file assets/ch07/polynomial.svg :exports both :width 4 :height 4
+plot(age, wage, xlim = agelims, cex = .5, col = "darkgrey")
+lines(age.grid, preds$fit, lwd = 2, col = "blue")
+matlines(age.grid, se.bands, lwd = 1, col = "blue", lty = 3)
+#+end_src
+
+#+RESULTS:
+[[file:assets/ch07/polynomial.svg]]
+
+Next we consider the task of predicting whether an individual earns more than
+$250,000 per year.
+
+#+begin_src R :results silent
+fit <- glm(I(wage > 250) ~ poly(age, 4), data = Wage, family = binomial)
+preds <- predict(fit, newdata = list(age = age.grid), se = T)
+#+end_src
+
+However, calculating the confidence intervals is more involved, because the
+predictions are /logits/, or log-odds.
+
+$$
+\log \left({\frac{\Pr(Y=1|X)}{1 - \Pr(Y=1|X)}} \right) = X\beta
+$$
+
+In order to obtain confidence intervals for $\Pr(Y=1|X)$, we use the transform
+
+#+begin_src R :results silent
+pfit <- exp(preds$fit) / (1 + exp(preds$fit))
+se.bands.logit <- cbind(preds$fit + 2 * preds$se.fit, preds$fit - 2 * preds$se.fit)
+se.bands <- exp(se.bands.logit) / (1 + exp(se.bands.logit))
+#+end_src
+
+Finally, we can plot the predictions.
+
+#+begin_src R :results output file graphics :file assets/ch07/binomial.svg :exports both :width 4 :height 4
+plot(age, I(wage > 250), xlim = agelims, type = "n", ylim = c(0, .2))
+points(jitter(age), I((wage > 250) / 5), cex = .5, pcd = "|", col = "darkgrey")
+lines(age.grid, pfit, lwd = 2, col = "blue")
+matlines(age.grid, se.bands, lwd = 1, col = "blue", lty = 3)
+#+end_src
+
+#+RESULTS:
+[[file:assets/ch07/binomial.svg]]
