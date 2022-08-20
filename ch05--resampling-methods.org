@@ -32,7 +32,7 @@ function to calculate the MSE.
 mean((mpg - predict(lm.fit, Auto))[-train]^2)
 #+end_src
 
-#+results:
+#+RESULTS:
 : 23.2660086465003
 
 We can use the =poly()= function to estimate the test error for the quadratic
@@ -43,7 +43,7 @@ lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
 mean((mpg - predict(lm.fit2, Auto))[-train]^2)
 #+end_src
 
-#+results:
+#+RESULTS:
 : 18.7164594933828
 
 ** Leave-One-Out Cross-Validation
@@ -56,7 +56,7 @@ cv.err <- cv.glm(Auto, glm.fit)
 cv.err$delta
 #+end_src
 
-#+results:
+#+RESULTS:
 | 24.2315135179292 |
 | 24.2311440937562 |
 
@@ -74,7 +74,7 @@ for (i in 1:10) {
 cv.error
 #+end_src
 
-#+results:
+#+RESULTS:
 | 24.2315135179292 |
 | 19.2482131244897 |
 |  19.334984064029 |
@@ -101,7 +101,7 @@ for (i in 1:10) {
 cv.error.10
 #+end_src
 
-#+results:
+#+RESULTS:
 |  24.174106644063 |
 | 19.3392127587751 |
 | 19.4756196456082 |
@@ -157,7 +157,7 @@ boot.fn <- function(data, index) {
 boot.fn(Auto, 1:392)
 #+end_src
 
-#+results:
+#+RESULTS:
 |   39.9358610211705 |
 | -0.157844733353654 |
 
@@ -169,7 +169,7 @@ set.seed(1)
 boot.fn(Auto, sample(392, 392, replace = T))
 #+end_src
 
-#+results:
+#+RESULTS:
 |   40.3404516830189 |
 | -0.163486837689938 |
 
@@ -187,7 +187,7 @@ coefficients in a linear model with the =summary()= function.
 summary(lm(mpg ~ horsepower, data = Auto))$coef
 #+end_src
 
-#+results:
+#+RESULTS:
 |   39.9358610211705 |   0.717498655554526 |  55.6598409098141 | 1.22036159610498e-187 |
 | -0.157844733353654 | 0.00644550051768504 | -24.4891351603436 |  7.03198902940366e-81 |
 
@@ -222,7 +222,7 @@ x = seq(1, 1e+05, 10)
 plot(x, pr(x))
 #+end_src
 
-#+results:
+#+RESULTS:
 [[file:assets/ch05/e2b.svg]]
 
 The probability quickly reaches an asymptote of about 63.2%.
@@ -235,7 +235,7 @@ for (i in 1:10000) {
 mean(store)
 #+end_src
 
-#+results:
+#+RESULTS:
 : 0.6385
 The probability varies a little compared to the analytical result.
 ** 3
@@ -271,7 +271,7 @@ val.fn <- function() {
 val.fn()
 #+end_src
 
-#+results:
+#+RESULTS:
 : 0.0256
 *** c
 #+begin_src R :exports both
@@ -282,7 +282,7 @@ for (i in 1:3) {
 errors
 #+end_src
 
-#+results:
+#+RESULTS:
 | 0.0288 |
 |  0.027 |
 |  0.027 |
@@ -297,7 +297,7 @@ glm.pred[glm.probs > 0.5] = "Yes"
 mean(glm.pred != Default[-train,]$default)
 #+end_src
 
-#+results:
+#+RESULTS:
 : 0.0272
 Including a dummy variable =student= doesn't affect the test error rate.
 ** 6
@@ -307,7 +307,7 @@ glm.fit <- glm(default ~ income + balance, data = Default, family = binomial)
 summary(glm.fit)
 #+end_src
 
-#+results:
+#+RESULTS:
 #+begin_example
 
 Call:
@@ -345,7 +345,7 @@ boot.fn <- function(data, index) {
 boot(Default, boot.fn, R = 50)
 #+end_src
 
-#+results:
+#+RESULTS:
 #+begin_example
 
 ORDINARY NONPARAMETRIC BOOTSTRAP
