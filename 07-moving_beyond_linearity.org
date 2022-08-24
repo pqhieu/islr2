@@ -1,5 +1,6 @@
 #+startup: showall inlineimages
 #+property: header-args:R :session *R* :family "Concourse 3"
+#+latex_header: \usepackage{eulervm}
 
 #+begin_src R :results silent
 library(ISLR2)
@@ -79,6 +80,7 @@ matlines(age.grid, se.bands, lwd = 1, col = "blue", lty = 3)
 
 #+RESULTS:
 [[file:assets/ch07/binomial.svg]]
+
 ** Splines
 In order to fit regression splines in =R=, we use the =splines= library. Here we have specified knots at ages 25, 40, and 60. This produces a spline with
 six basis functions. In order to fit a natural spline, we use the =ns()= function.
@@ -97,6 +99,7 @@ lines(age.grid, pred2$fit, col = "red", lwd = 2)
 
 #+RESULTS:
 [[file:assets/ch07/splines.svg]]
+
 ** GAMs
 We now fit a GAM to predict =wage= using natural spline functions of =year= and =age=,
 treating =education= as a qualitative predictor.
@@ -108,12 +111,7 @@ gam <- lm(wage ~ ns(year, 4) + ns(age, 5) + education, data = Wage)
 We now fit using smoothing splines rather than natural splines. We will need to
 use the =gam= library in =R=.
 
-#+begin_src R :results output file graphics :file assets/ch07/gam.svg :exports both :width 4 :height 4
+#+begin_src R :results output silent
 library(gam)
 gam.m3 <- gam(wage ~ s(year, 4) + s(age, 5) + education, data = Wage)
-par(mfrow = c(1, 3))
-plot(gam.m3, se = TRUE, col = "blue")
 #+end_src
-
-#+RESULTS:
-[[file:assets/ch07/gam.svg]]

@@ -1,5 +1,6 @@
 #+startup: showall inlineimages
 #+property: header-args:R :session *R* :family "Concourse 3"
+#+latex_header: \usepackage{eulervm}
 
 #+begin_src R :results silent
 library(ISLR2)
@@ -122,6 +123,7 @@ plot(regfit.full, scale = "adjr2")
 
 #+RESULTS:
 [[file:assets/ch06/subset.svg]]
+
 ** Ridge Regression and the Lasso
 We will now perform ridge regression and the lasso in order to predict =Salary= on
 the =Hitters= data.
@@ -221,7 +223,9 @@ predict(out, type = "coefficients", s = bestlam)[1:20, ]
 :    0.02825013    0.21628385    0.41712537    0.00000000   20.28615023
 :     DivisionW       PutOuts       Assists        Errors    NewLeagueN
 : -116.16755870    0.23752385    0.00000000   -0.85629148    0.00000000
+
 ** PCR and PLS Regression
+
 *** Principal Components Regression
 Principal components regression (PCR) can be performed using the =pcr()= function,
 which is part of the =pls= library.
@@ -290,6 +294,7 @@ This test set MSE is competitive with the results obtained using ridge
 regression and the lasso. However, the final model is difficult to interpret
 because it does not perform any kind of variable selection or even directly
 produce coefficient estimates.
+
 *** Partial Least Squares
 We implement partial least squares using the =plsr()= function.
 
@@ -357,6 +362,7 @@ guarantee having the smallest test RSS.
 - (iii) False.
 - (iv) False.
 - (v) False.
+
 ** 2
 *** a
 (iii) less flexible and better predictions because less variance, more bias.
@@ -364,6 +370,7 @@ guarantee having the smallest test RSS.
 (iii) same as the lasso.
 *** c
 (ii) more flexible, less bias and more variance.
+
 ** 3
 *** a
 (iv) Decrease steadily. The training error at $s=0$ is the maximum and will
@@ -380,6 +387,7 @@ dependent on the data.
 (iv) Decrease steadily. The bias of the model when $s=0$ is the highest.
 *** e
 (v) Remain constant. The irreducible error is model independent.
+
 ** 4
 *** a
 (iv) Increase steadily. The training error when $\lambda=0$ is the lowest.
@@ -395,6 +403,7 @@ decrease to 0.
 (iii) Increase steadily. The bias of the model when $\lambda=0$ is the lowest.
 *** e
 (v) Remain constant. The irreducible error is model independent.
+
 ** 5
 *** a
 Minimize
@@ -404,7 +413,9 @@ $$
 $$
 
 ** 6
+
 ** 7
+
 ** 8
 *** a
 #+begin_src R :results silent
@@ -477,7 +488,9 @@ poly(x, 10, raw = T)10 .
 #+end_example
 
 The lasso prefers low polynomial coefficients, i.e. $X$, $X^2$, and $X^3$.
+
 ** 9
+
 ** 10
 *** a
 #+begin_src R :results silent

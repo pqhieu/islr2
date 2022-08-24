@@ -1,5 +1,6 @@
 #+startup: showall inlineimages
 #+property: header-args:R :session *R* :family "Concourse 3"
+#+latex_header: \usepackage{eulervm}
 
 
 #+begin_src R :results silent
@@ -238,6 +239,7 @@ mean(store)
 #+RESULTS:
 : 0.6385
 The probability varies a little compared to the analytical result.
+
 ** 3
 *** a
 k-fold cross-validation is implemented by dividing the observations into $k$
@@ -247,10 +249,12 @@ The validation set approach is simple to implement but suffer from high bias due
 to the dependent on randomness. On the other hand, the LOOCV method is an
 extreme version of k-fold cross validation where $k=n$. It is more computation
 intensive, but has lower bias compared to k-fold CV.
+
 ** 4
 We can use the bootstrap to estimate the standard deviation by sampling
 different training set with replacement and fit a predictor every time. Then we
 can calculate the standard deviation from the responses of these runs.
+
 ** 5
 *** a
 #+begin_src R :results silent
@@ -300,6 +304,7 @@ mean(glm.pred != Default[-train,]$default)
 #+RESULTS:
 : 0.0272
 Including a dummy variable =student= doesn't affect the test error rate.
+
 ** 6
 *** a
 #+begin_src R :results output :exports both
