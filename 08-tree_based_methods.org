@@ -1,3 +1,4 @@
+#+title: Tree-based Methods
 #+startup: showall inlineimages
 #+property: header-args:R :session *R* :family "Concourse 3"
 #+latex_header: \usepackage{eulervm}
