@@ -1,7 +1,6 @@
 #+title: Resampling Methods
-#+startup: showall inlineimages
+#+startup: showall inlineimages latexpreview
 #+property: header-args:R :session *R* :family "Concourse 3"
-#+latex_header: \usepackage{eulervm}
 
 
 #+begin_src R :results silent

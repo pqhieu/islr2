@@ -1,4 +1,88 @@
 #+title: Tree-based Methods
-#+startup: showall inlineimages
+#+startup: showall inlineimages latexpreview
 #+property: header-args:R :session *R* :family "Concourse 3"
-#+latex_header: \usepackage{eulervm}
+
+#+begin_src R :results silent
+library(ISLR2)
+library(tree)
+attach(Carseats)
+#+end_src
+
+* Lab
+** Fitting Classification Trees
+We first use classification trees to analyze the =Carseats= dataset. In these
+data, =Sales= is a continuous variable, so we begin by recoding it as a binary
+variable. We then use the =tree()= function to fit a classification tree.
+
+#+begin_src R :results output :exports both
+High <- factor(ifelse(Sales <= 8, "No", "Yes"))
+Carseats <- data.frame(Carseats, High)
+tree.carseats <- tree(High ~ . - Sales, Carseats)
+summary(tree.carseats)
+#+end_src
+
+#+RESULTS:
+:
+: Classification tree:
+: tree(formula = High ~ . - Sales, data = Carseats)
+: Variables actually used in tree construction:
+: [1] "ShelveLoc"   "Price"       "Income"      "CompPrice"   "Population"
+: [6] "Advertising" "Age"         "US"
+: Number of terminal nodes:  27
+: Residual mean deviance:  0.4575 = 170.7 / 373
+: Misclassification error rate: 0.09 = 36 / 400
+
+For classification tree, the deviance reported is given by
+
+$$
+-2\sum_m\sum_kn_{mk}\log \hat{p}_{mk},
+$$
+
+where $n_{mk}$ is the number of observations in the m-the terminal node that
+belong to the k-the class.
+
+** Fitting Regression Trees
+Here we fit a regression tree to the =Boston= dataset.
+
+#+begin_src R :results output :exports both
+set.seed(1)
+train <- sample(1:nrow(Boston), nrow(Boston) / 2)
+tree.boston <- tree(medv ~ ., Boston, subset = train)
+summary(tree.boston)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+Regression tree:
+tree(formula = medv ~ ., data = Boston, subset = train)
+Variables actually used in tree construction:
+[1] "rm"    "lstat" "crim"  "age"
+Number of terminal nodes:  7
+Residual mean deviance:  10.38 = 2555 / 246
+Distribution of residuals:
+    Min.  1st Qu.   Median     Mean  3rd Qu.     Max.
+-10.1800  -1.7770  -0.1775   0.0000   1.9230  16.5800
+#+end_example
+
+Now we use the =cv.tree()= function to see whether pruning the tree will improve
+performance.
+
+#+begin_src R :results output file graphics :file assets/ch08/tree.svg :exports both :width 4 :height 4
+cv.boston <- cv.tree(tree.boston)
+plot(cv.boston$size, cv.boston$dev, type = "b")
+#+end_src
+
+#+RESULTS:
+[[file:assets/ch08/tree.svg]]
+
+If we wish to prun the tree, we could use the =prune.tree()= function:
+
+#+begin_src R :results output file graphics :file assets/ch08/prune.svg :exports both :width 4 :height 4
+prune.boston <- prune.tree(tree.boston, best = 5)
+plot(prune.boston)
+text(prune.boston, pretty = 0)
+#+end_src
+
+#+RESULTS:
+[[file:assets/ch08/prune.svg]]
