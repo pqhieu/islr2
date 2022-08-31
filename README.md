@@ -55,3 +55,23 @@
   - [ ] Exercise 10
   - [ ] Exercise 11
   - [ ] Exercise 12
+### [Chapter 8](08--tree-based-methods.org)
+- [ ] Lab
+  - [x] Fitting classification trees
+  - [x] Fitting regression trees
+  - [ ] Bagging and random forests
+  - [ ] Boosting
+  - [ ] Bayesian additive regression trees
+- [ ] Exercises
+  - [ ] Exercise 1
+  - [ ] Exercise 2
+  - [ ] Exercise 3
+  - [ ] Exercise 4
+  - [ ] Exercise 5
+  - [ ] Exercise 6
+  - [ ] Exercise 7
+  - [ ] Exercise 8
+  - [ ] Exercise 9
+  - [ ] Exercise 10
+  - [ ] Exercise 11
+  - [ ] Exercise 12
