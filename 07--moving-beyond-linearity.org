@@ -2,6 +2,7 @@
 #+startup: showall inlineimages latexpreview
 #+property: header-args:R :session *R* :family "Concourse 3"
 
+
 #+begin_src R :results silent
 library(ISLR2)
 library(splines)
@@ -10,6 +11,7 @@ attach(Wage)
 
 * Lab
 ** Polynomial Regression and Step Functions
+
 We first fit a linear model using a fourth-degree polynomial.
 
 #+begin_src R :results output :exports both
@@ -25,8 +27,7 @@ coef(summary(fit))
 : poly(age, 4)3  125.52169 39.9147851   3.144742 1.678622e-03
 : poly(age, 4)4  -77.91118 39.9147851  -1.951938 5.103865e-02
 
-We now create a grid of values for =age= at which we want predictions, and then
-call then call then call the generic =predict()= function.
+We now create a grid of values for =age= at which we want predictions, and then call then call then call the generic =predict()= function.
 
 #+begin_src R :results silent
 agelims <- range(age)
@@ -46,16 +47,14 @@ matlines(age.grid, se.bands, lwd = 1, col = "blue", lty = 3)
 #+RESULTS:
 [[file:assets/ch07/polynomial.svg]]
 
-Next we consider the task of predicting whether an individual earns more than
-$250,000 per year.
+Next we consider the task of predicting whether an individual earns more than $250,000 per year.
 
 #+begin_src R :results silent
 fit <- glm(I(wage > 250) ~ poly(age, 4), data = Wage, family = binomial)
 preds <- predict(fit, newdata = list(age = age.grid), se = T)
 #+end_src
 
-However, calculating the confidence intervals is more involved, because the
-predictions are /logits/, or log-odds.
+However, calculating the confidence intervals is more involved, because the predictions are /logits/, or log-odds.
 
 $$
 \log \left({\frac{\Pr(Y=1|X)}{1 - \Pr(Y=1|X)}} \right) = X\beta
@@ -82,8 +81,11 @@ matlines(age.grid, se.bands, lwd = 1, col = "blue", lty = 3)
 [[file:assets/ch07/binomial.svg]]
 
 ** Splines
-In order to fit regression splines in =R=, we use the =splines= library. Here we have specified knots at ages 25, 40, and 60. This produces a spline with
-six basis functions. In order to fit a natural spline, we use the =ns()= function.
+
+In order to fit regression splines in =R=, we use the =splines= library.
+Here we have specified knots at ages 25, 40, and 60.
+This produces a spline with six basis functions.
+In order to fit a natural spline, we use the =ns()= function.
 
 #+begin_src R :results output file graphics :file assets/ch07/splines.svg :exports both :width 4 :height 4
 fit <- lm(wage ~ bs(age, knots = c(25, 40, 60)), data = Wage)
@@ -101,15 +103,14 @@ lines(age.grid, pred2$fit, col = "red", lwd = 2)
 [[file:assets/ch07/splines.svg]]
 
 ** GAMs
-We now fit a GAM to predict =wage= using natural spline functions of =year= and =age=,
-treating =education= as a qualitative predictor.
+We now fit a GAM to predict =wage= using natural spline functions of =year= and =age=, treating =education= as a qualitative predictor.
 
 #+begin_src R :results silent
 gam <- lm(wage ~ ns(year, 4) + ns(age, 5) + education, data = Wage)
 #+end_src
 
-We now fit using smoothing splines rather than natural splines. We will need to
-use the =gam= library in =R=.
+We now fit using smoothing splines rather than natural splines.
+We will need to use the =gam= library in =R=.
 
 #+begin_src R :results output silent
 library(gam)

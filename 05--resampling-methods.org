@@ -10,24 +10,22 @@ library(boot)
 
 * Lab
 ** The Validation Set Approach
-We explore the use of the validation set approach in order to estimate the test
-error rates. We begin by using the =sample()= function to split the observations
-into two halves.
+
+We explore the use of the validation set approach in order to estimate the test error rates.
+We begin by using the =sample()= function to split the observations into two halves.
 
 #+begin_src R :results silent
 set.seed(1)
 train <- sample(392, 196)
 #+end_src
 
-We then use the =subset= option in =lm()= to fit a linear regression using only the
-training set.
+We then use the =subset= option in =lm()= to fit a linear regression using only the training set.
 
 #+begin_src R :results silent
 lm.fit <- lm(mpg ~ horsepower, data = Auto, subset = train)
 #+end_src
 
-We now use the =predict()= function to estimate the response, and use the =mean()=
-function to calculate the MSE.
+We now use the =predict()= function to estimate the response, and use the =mean()= function to calculate the MSE.
 
 #+begin_src R :exports both
 mean((mpg - predict(lm.fit, Auto))[-train]^2)
@@ -36,8 +34,7 @@ mean((mpg - predict(lm.fit, Auto))[-train]^2)
 #+RESULTS:
 : 23.2660086465003
 
-We can use the =poly()= function to estimate the test error for the quadratic
-regression.
+We can use the =poly()= function to estimate the test error for the quadratic regression.
 
 #+begin_src R :exports both
 lm.fit2 <- lm(mpg ~ poly(horsepower, 2), data = Auto, subset = train)
@@ -48,8 +45,9 @@ mean((mpg - predict(lm.fit2, Auto))[-train]^2)
 : 18.7164594933828
 
 ** Leave-One-Out Cross-Validation
-The leave-one-out cross-validation (LOOCV) estimate can be automatically
-computed using the =glm()= and =cv.glm()= functions. For instance
+
+The leave-one-out cross-validation (LOOCV) estimate can be automatically computed using the =glm()= and =cv.glm()= functions.
+For instance
 
 #+begin_src R :exports both
 glm.fit <- glm(mpg ~ horsepower, data = Auto)
@@ -63,8 +61,7 @@ cv.err$delta
 
 The two numbers in the =delta= vector contain the cross-validation results.
 
-We can repeat this procedure for complex polynomial fits using the =for()=
-function.
+We can repeat this procedure for complex polynomial fits using the =for()= function.
 
 #+begin_src R :exports both
 cv.error <- rep(0, 10)
@@ -87,10 +84,10 @@ cv.error
 |   19.06862998146 |
 | 19.4909322993298 |
 
-We see a sharp drop in the estimated test MSE between the linear and quadratic
-fits, but there is no clear improvement from using higher-order polynomials
+We see a sharp drop in the estimated test MSE between the linear and quadratic fits, but there is no clear improvement from using higher-order polynomials
 
 ** k-Fold Cross-Validation
+
 The =cv.glm()= function can also be used to implement k-fold cross-validation.
 
 #+begin_src R :exports both
@@ -114,15 +111,14 @@ cv.error.10
 | 19.1010277249683 |
 | 19.6422392644815 |
 
-We still see little evidence that using cubic or higher-order polynomials leads
-to lower test error than simply using a quadratic fit.
+We still see little evidence that using cubic or higher-order polynomials leads to lower test error than simply using a quadratic fit.
 
 ** The Bootstrap
-One of the advantages of the bootstrap approach is that it can be applied in
-almost all situations. Performing a bootstrap analysis in =R= entails two steps.
-First, we create a function that computes that statistic of interest. Second, we
-use the =boot()= function, to perform the bootstrap by repeatedly sampling
-observations from the data set with replacement.
+
+One of the advantages of the bootstrap approach is that it can be applied in almost all situations.
+Performing a bootstrap analysis in =R= entails two steps.
+First, we create a function that computes that statistic of interest.
+Second, we use the =boot()= function, to perform the bootstrap by repeatedly sampling observations from the data set with replacement.
 
 #+begin_src R :results silent
 alpha.fn <- function(data, index) {
@@ -146,10 +142,8 @@ We can implement a bootstrap analysis by using the =boot()= function.
 boot(Portfolio, alpha.fn, R = 1000)
 #+end_src
 
-The bootstrap approach can also be used to assess the variablity of the
-coefficients from a statistical learning method. We first create a simple
-function =boot.fn()=, which takes in the =Auto= data set as well as a set of indices
-for the observations, and returns the intercept and slope.
+The bootstrap approach can also be used to assess the variablity of the coefficients from a statistical learning method.
+We first create a simple function =boot.fn()=, which takes in the =Auto= data set as well as a set of indices for the observations, and returns the intercept and slope.
 
 #+begin_src R :exports both
 boot.fn <- function(data, index) {
@@ -162,8 +156,7 @@ boot.fn(Auto, 1:392)
 |   39.9358610211705 |
 | -0.157844733353654 |
 
-The =boot.fn()= function can also be used in order to create bootstrap esimates
-for the intercept and slope terms by randomly sampling from the data set.
+The =boot.fn()= function can also be used in order to create bootstrap esimates for the intercept and slope terms by randomly sampling from the data set.
 
 #+begin_src R :exports both
 set.seed(1)
@@ -174,15 +167,13 @@ boot.fn(Auto, sample(392, 392, replace = T))
 |   40.3404516830189 |
 | -0.163486837689938 |
 
-Next, we use the =boot()= function to compute the standard errors of 1000
-bootstrap estimates for the intercept and slope terms.
+Next, we use the =boot()= function to compute the standard errors of 1000 bootstrap estimates for the intercept and slope terms.
 
 #+begin_src R :results silent
 boot(Auto, boot.fn, R = 1000)
 #+end_src
 
-Standard formulas can be used to compute the standard errors for the regressions
-coefficients in a linear model with the =summary()= function.
+Standard formulas can be used to compute the standard errors for the regressions coefficients in a linear model with the =summary()= function.
 
 #+begin_src R :exports both
 summary(lm(mpg ~ horsepower, data = Auto))$coef
@@ -192,14 +183,13 @@ summary(lm(mpg ~ horsepower, data = Auto))$coef
 |   39.9358610211705 |   0.717498655554526 |  55.6598409098141 | 1.22036159610498e-187 |
 | -0.157844733353654 | 0.00644550051768504 | -24.4891351603436 |  7.03198902940366e-81 |
 
-This is somewhat different from the estimates obtained using the bootstrap. This
-is because the standard formulas rely on certain assumptions. For example, they
-depend on the unknown parameter $\sigma^2$, the noise variance. Since there is a
-non-linear relationship in the data, the residuals from a linear fit will be
-inflated, and so will $\sigma^2$. In addition, the standard formulas assume that the
-$x_i$ are fixed, and all the variability comes from the variation in the errors
-$\epsilon_i$. The bootstrap approach does not rely on any of these assumptions, and so
-it is more likely to give a more accurate esimate of the standard errors.
+This is somewhat different from the estimates obtained using the bootstrap.
+This is because the standard formulas rely on certain assumptions.
+For example, they depend on the unknown parameter $\sigma^2$, the noise variance.
+Since there is a non-linear relationship in the data, the residuals from a linear fit will be inflated, and so will $\sigma^2$.
+In addition, the standard formulas assume that the $x_i$ are fixed, and all the variability comes from the variation in the errors $\epsilon_i$.
+The bootstrap approach does not rely on any of these assumptions, and so it is more likely to give a more accurate esimate of the standard errors.
+
 * Exercises
 ** 2
 *** a
@@ -207,9 +197,8 @@ $1-1/n$
 *** b
 $(1-1/n)^2$
 *** c
-Because we are sampling with replacement, the probability that the $j$-th
-observation is not in the bootstrap sample after one sample is $1-1/n$. We need
-to pick $n$ samples, so the final probability is $(1-1/n)^n$.
+Because we are sampling with replacement, the probability that the $j$-th observation is not in the bootstrap sample after one sample is $1-1/n$.
+We need to pick $n$ samples, so the final probability is $(1-1/n)^n$.
 *** d
 $1 - (1-1/5)^5 = 67.2\%$
 *** e
@@ -238,22 +227,20 @@ mean(store)
 
 #+RESULTS:
 : 0.6385
+
 The probability varies a little compared to the analytical result.
 
 ** 3
 *** a
-k-fold cross-validation is implemented by dividing the observations into $k$
-non-overlapping groups, then average the test error rate over $k$ runs.
+k-fold cross-validation is implemented by dividing the observations into $k$ non-overlapping groups, then average the test error rate over $k$ runs.
 *** b
-The validation set approach is simple to implement but suffer from high bias due
-to the dependent on randomness. On the other hand, the LOOCV method is an
-extreme version of k-fold cross validation where $k=n$. It is more computation
-intensive, but has lower bias compared to k-fold CV.
+The validation set approach is simple to implement but suffer from high bias due to the dependent on randomness.
+On the other hand, the LOOCV method is an extreme version of k-fold cross validation where $k=n$.
+It is more computation intensive, but has lower bias compared to k-fold CV.
 
 ** 4
-We can use the bootstrap to estimate the standard deviation by sampling
-different training set with replacement and fit a predictor every time. Then we
-can calculate the standard deviation from the responses of these runs.
+We can use the bootstrap to estimate the standard deviation by sampling different training set with replacement and fit a predictor every time.
+Then we can calculate the standard deviation from the responses of these runs.
 
 ** 5
 *** a
@@ -290,6 +277,7 @@ errors
 | 0.0288 |
 |  0.027 |
 |  0.027 |
+
 It seems to be average around 2.5% test error rate.
 *** d
 #+begin_src R :exports both
@@ -303,6 +291,7 @@ mean(glm.pred != Default[-train,]$default)
 
 #+RESULTS:
 : 0.0272
+
 Including a dummy variable =student= doesn't affect the test error rate.
 
 ** 6
