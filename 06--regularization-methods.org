@@ -1,6 +1,6 @@
 #+title: Regularization Methods
 #+startup: showall inlineimages latexpreview
-#+property: header-args:R :session *R* :family "Concourse 3"
+#+property: header-args:R :session *R* :family "Alegreya Sans"
 
 
 #+begin_src R :results silent
@@ -537,7 +537,7 @@ which.min(errors.val)
 #+end_src
 
 #+RESULTS:
-: [1] 17
+: [1] 19
 
 The model with 17 predictors has the smallest MSE, equal to the original data.
 *** f
@@ -546,11 +546,11 @@ coef(regfit.full, id = 17)
 #+end_src
 
 #+RESULTS:
-: (Intercept)         x.1         x.3         x.5         x.6         x.7
-: -0.06073059  0.17997121 -0.67254439  0.92590972 -0.24629392 -1.39888688
-:         x.8        x.10        x.11        x.12        x.13        x.14
-:  0.79153372  0.77727294  0.83702056  0.61583171 -0.44087356 -0.84020601
-:        x.15        x.16        x.17        x.18        x.19        x.20
-: -0.68448585 -0.31047611  0.40764020  1.78899142  0.90020756 -0.97711842
+:  (Intercept)          x.1          x.2          x.3          x.5          x.7
+: -0.006609165  0.438292692 -0.169081654 -0.812679614  0.953678305 -1.539148680
+:          x.8         x.10         x.11         x.12         x.13         x.14
+:  0.684000612  0.724402859  0.880131645  0.745384593 -0.272960869 -0.602003848
+:         x.15         x.16         x.17         x.18         x.19         x.20
+: -0.727950664 -0.346869432  0.323090774  1.530396753  0.925962276 -0.903932717
 
 The model is similar to the true underlying model used to generate the data.

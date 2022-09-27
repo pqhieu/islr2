@@ -1,6 +1,6 @@
 #+title: Resampling Methods
 #+startup: showall inlineimages latexpreview
-#+property: header-args:R :session *R* :family "Concourse 3"
+#+property: header-args:R :session *R* :family "Alegreya Sans"
 
 
 #+begin_src R :results silent
@@ -15,6 +15,7 @@ We explore the use of the validation set approach in order to estimate the test 
 We begin by using the =sample()= function to split the observations into two halves.
 
 #+begin_src R :results silent
+attach(Auto)
 set.seed(1)
 train <- sample(392, 196)
 #+end_src
@@ -84,7 +85,7 @@ cv.error
 |   19.06862998146 |
 | 19.4909322993298 |
 
-We see a sharp drop in the estimated test MSE between the linear and quadratic fits, but there is no clear improvement from using higher-order polynomials
+We see a sharp drop in the estimated test MSE between the linear and quadratic fits, but there is no clear improvement from using higher-order polynomials.
 
 ** k-Fold Cross-Validation
 
@@ -197,7 +198,7 @@ $1-1/n$
 *** b
 $(1-1/n)^2$
 *** c
-Because we are sampling with replacement, the probability that the $j$-th observation is not in the bootstrap sample after one sample is $1-1/n$.
+Because we are sampling with replacement, the probability that the j-th observation is not in the bootstrap sample after one sample is $1-1/n$.
 We need to pick $n$ samples, so the final probability is $(1-1/n)^n$.
 *** d
 $1 - (1-1/5)^5 = 67.2\%$
@@ -226,7 +227,7 @@ mean(store)
 #+end_src
 
 #+RESULTS:
-: 0.6385
+: 0.635
 
 The probability varies a little compared to the analytical result.
 
