@@ -1,7 +1,6 @@
 #+title: Tree-based Methods
 #+startup: showall inlineimages latexpreview
-#+property: header-args:R :session *R* :family "Alegreya Sans"
-
+#+property: header-args:R :session *R* :family "Alegreya Sans" :width 4 :height 4
 
 #+begin_src R :results silent
 library(ISLR2)
@@ -10,11 +9,10 @@ attach(Carseats)
 #+end_src
 
 * Lab
+
 ** Fitting Classification Trees
 
-We first use classification trees to analyze the =Carseats= dataset.
-In these data, =Sales= is a continuous variable, so we begin by recoding it as a binary variable.
-We then use the =tree()= function to fit a classification tree.
+We first use classification trees to analyze the =Carseats= dataset. In these data, =Sales= is a continuous variable, so we begin by recoding it as a binary variable. We then use the =tree()= function to fit a classification tree.
 
 #+begin_src R :results output :exports both
 High <- factor(ifelse(Sales <= 8, "No", "Yes"))
@@ -69,7 +67,7 @@ Distribution of residuals:
 
 Now we use the =cv.tree()= function to see whether pruning the tree will improve performance.
 
-#+begin_src R :results output file graphics :file assets/ch08/tree.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch08/tree.svg :exports both
 cv.boston <- cv.tree(tree.boston)
 plot(cv.boston$size, cv.boston$dev, type = "b")
 #+end_src
@@ -79,7 +77,7 @@ plot(cv.boston$size, cv.boston$dev, type = "b")
 
 If we wish to prune the tree, we could use the =prune.tree()= function:
 
-#+begin_src R :results output file graphics :file assets/ch08/prune.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch08/prune.svg :exports both
 prune.boston <- prune.tree(tree.boston, best = 5)
 plot(prune.boston)
 text(prune.boston, pretty = 0)

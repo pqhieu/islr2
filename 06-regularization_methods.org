@@ -1,7 +1,6 @@
 #+title: Regularization Methods
 #+startup: showall inlineimages latexpreview
-#+property: header-args:R :session *R* :family "Alegreya Sans"
-
+#+property: header-args:R :session *R* :family "Alegreya Sans" :width 4 :height 4
 
 #+begin_src R :results silent
 library(ISLR2)
@@ -11,12 +10,12 @@ library(pls)
 #+end_src
 
 * Lab
+
 ** Subset Selection Methods
+
 *** Best Subset Selection
 
-Here we apply the best subset selection approach to the =Hitters= data.
-We notice that the =Salary= variable is missing for some of the players.
-We can use the =is.na()= and =na.omit()= functions to identify and remove rows that have missing values.
+Here we apply the best subset selection approach to the =Hitters= data. We notice that the =Salary= variable is missing for some of the players. We can use the =is.na()= and =na.omit()= functions to identify and remove rows that have missing values.
 
 #+begin_src R :results output :exports both
 dim(Hitters)
@@ -107,14 +106,11 @@ Selection Algorithm: exhaustive
 19  ( 1 ) "*"    "*"     "*"       "*"     "*"     "*"    "*"
 #+end_example
 
-An asterisk indicates that a given variable is included in the model.
-By default, =regsubsets()= only reports results up to the best eight-variable model.
-But the =nvmax= option can be used in order to return as many variable as desired.
+An asterisk indicates that a given variable is included in the model. By default, =regsubsets()= only reports results up to the best eight-variable model. But the =nvmax= option can be used in order to return as many variable as desired.
 
-Plotting RSS, adjusted $R^2$, $C_p$, and BIC for all of the models will help us decide which model to select.
-The =regsubsets()= function has a built-in =plot()= command which can be used to display the selected variables for the best model with a given number of predictors.
+Plotting RSS, adjusted $R^2$, $C_p$, and BIC for all of the models will help us decide which model to select. The =regsubsets()= function has a built-in =plot()= command which can be used to display the selected variables for the best model with a given number of predictors.
 
-#+begin_src R :results output file graphics :file assets/ch06/subset.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch06/subset.svg :exports both
 plot(regfit.full, scale = "adjr2")
 #+end_src
 
@@ -132,11 +128,9 @@ y <- Hitters$Salary
 
 *** Ridge Regression
 
-The =glmnet()= function has an =alpha= argument that determines what type of model is fit.
-If =alpha=0= then a ridge regression model is fit, and if =alpha=1= then a lasso model is fit.
+The =glmnet()= function has an =alpha= argument that determines what type of model is fit. If =alpha=0= then a ridge regression model is fit, and if =alpha=1= then a lasso model is fit.
 
-By default the =glmnet()= function performs ridge regression for an automatically selected range of $\lambda$ values.
-Associated with each value of $\lambda$ is a vector of ridge regression coefficients.
+By default the =glmnet()= function performs ridge regression for an automatically selected range of $\lambda$ values. Associated with each value of $\lambda$ is a vector of ridge regression coefficients.
 
 #+begin_src R :results output :exports both
 grid <- 10^seq(10, -2, length = 100)
@@ -147,10 +141,9 @@ dim(coef(ridge.mod))
 #+RESULTS:
 : [1]  20 100
 
-We now split the samples into a training set and a test set in order to estimate the test error.
-In general, it would be better to use cross-validation to choose the tuning paramter $\lambda$.
+We now split the samples into a training set and a test set in order to estimate the test error. In general, it would be better to use cross-validation to choose the tuning paramter $\lambda$.
 
-#+begin_src R :results output file graphics :file assets/ch06/ridge.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch06/ridge.svg :exports both
 set.seed(1)
 train <- sample(1:nrow(x), nrow(x) / 2)
 test <- (-train)
@@ -188,7 +181,7 @@ As expected, none of the coefficients are zero --- ridge regression does not per
 
 We now ask whether the lasso can yield either a more accurate or a more interpretable model than ridge regression.
 
-#+begin_src R :results output file graphics :file assets/ch06/lasso.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch06/lasso.svg :exports both
 lasso.mod <- glmnet(x[train, ], y[train], alpha = 1, lambda = grid)
 plot(lasso.mod)
 #+end_src
@@ -217,6 +210,7 @@ predict(out, type = "coefficients", s = bestlam)[1:20, ]
 : -116.16755870    0.23752385    0.00000000   -0.85629148    0.00000000
 
 ** PCR and PLS Regression
+
 *** Principal Components Regression
 
 Principal components regression (PCR) can be performed using the =pcr()= function, which is part of the =pls= library.
@@ -258,10 +252,9 @@ X          99.89     99.97     99.99    100.00
 Salary     53.01     53.85     54.61     54.61
 #+end_example
 
-The CV score is provided for each possible number of components, ranging from $M=0$ onwards.
-One can also plot the cross-validation scores using the =validationplot()= function.
+The CV score is provided for each possible number of components, ranging from $M=0$ onwards. One can also plot the cross-validation scores using the =validationplot()= function.
 
-#+begin_src R :results output file graphics :file assets/ch06/pcr.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch06/pcr.svg :exports both
 validationplot(pcr.fit, val.type = "MSEP")
 #+end_src
 
@@ -280,8 +273,7 @@ mean((pcr.pred - y.test)^2)
 #+RESULTS:
 : [1] 142811.8
 
-This test set MSE is competitive with the results obtained using ridge regression and the lasso.
-However, the final model is difficult to interpret because it does not perform any kind of variable selection or even directly produce coefficient estimates.
+This test set MSE is competitive with the results obtained using ridge regression and the lasso. However, the final model is difficult to interpret because it does not perform any kind of variable selection or even directly produce coefficient estimates.
 
 *** Partial Least Squares
 
@@ -324,8 +316,7 @@ X          99.61     99.70     99.95    100.00
 Salary     58.17     58.49     58.56     58.62
 #+end_example
 
-The lowest cross-validation error occurs when only $M=1$ partial least squares directions are used.
-We now evaluate the corresponding test set MSE.
+The lowest cross-validation error occurs when only $M=1$ partial least squares directions are used. We now evaluate the corresponding test set MSE.
 
 #+begin_src R :results output :exports both
 pls.pred <- predict(pls.fit, x[test, ], ncomp = 1)
@@ -338,12 +329,19 @@ mean((pls.pred - y.test)^2)
 The test MSE is slightly higher than ridge regression, the lasso, and PCR.
 
 * Exercises
+
 ** 1
+
 *** a
+
 The best subset selection model has the smallest training RSS since it tries every combination of predictors during training.
+
 *** b
+
 We don't know the answer since having the smallest training RSS does not guarantee having the smallest test RSS.
+
 *** c
+
 - (i) True.
 - (ii) True.
 - (iii) False.
@@ -351,51 +349,66 @@ We don't know the answer since having the smallest training RSS does not guarant
 - (v) False.
 
 ** 2
+
 *** a
+
 (iii) less flexible and better predictions because less variance, more bias.
+
 *** b
+
 (iii) same as the lasso.
+
 *** c
+
 (ii) more flexible, less bias and more variance.
 
 ** 3
+
 *** a
-(iv) Decrease steadily.
-The training error at $s=0$ is the maximum and will decrease as we relax the constraint.
+
+(iv) Decrease steadily. The training error at $s=0$ is the maximum and will decrease as we relax the constraint.
+
 *** b
-(ii) Decrease initially, and then start increasing in an U-shape.
-When $s=0$, the model is underfit to the data and has high test RSS.
-As we increase $s$, the model will start fitting well and eventually become overfit to the data.
+
+(ii) Decrease initially, and then start increasing in an U-shape. When $s=0$, the model is underfit to the data and has high test RSS. As we increase $s$, the model will start fitting well and eventually become overfit to the data.
+
 *** c
-(iii) Increase steadily.
-When $s=0$, the model has almost no variance.
-As we increase $s$, the variance will keep increasing and the model becomes highly dependent on the data.
+
+(iii) Increase steadily. When $s=0$, the model has almost no variance. As we increase $s$, the variance will keep increasing and the model becomes highly dependent on the data.
+
 *** d
-(iv) Decrease steadily.
-The bias of the model when $s=0$ is the highest.
+
+(iv) Decrease steadily. The bias of the model when $s=0$ is the highest.
+
 *** e
-(v) Remain constant.
-The irreducible error is model independent.
+
+(v) Remain constant. The irreducible error is model independent.
 
 ** 4
 *** a
-(iv) Increase steadily.
-The training error when $\lambda=0$ is the lowest.
+
+(iv) Increase steadily. The training error when $\lambda=0$ is the lowest.
+
 *** b
-(ii) Decrease initially, and then start increasing in an U-shape.
-The model overfits to the data in the beginning, then start fitting well and eventually become underfit to the data as we increase $\lambda$.
+
+(ii) Decrease initially, and then start increasing in an U-shape. The model overfits to the data in the beginning, then start fitting well and eventually become underfit to the data as we increase $\lambda$.
+
 *** c
-(iv) Decrease steadily.
-When $\lambda=0$, the coefficients are heavily dependent on the data, hence high variance. When we increase $\lambda$, the variance will gradually decrease to 0.
+
+(iv) Decrease steadily. When $\lambda=0$, the coefficients are heavily dependent on the data, hence high variance. When we increase $\lambda$, the variance will gradually decrease to 0.
+
 *** d
-(iii) Increase steadily.
-The bias of the model when $\lambda=0$ is the lowest.
+
+(iii) Increase steadily. The bias of the model when $\lambda=0$ is the lowest.
+
 *** e
-(v) Remain constant.
-The irreducible error is model independent.
+
+(v) Remain constant. The irreducible error is model independent.
 
 ** 5
+
 *** a
+
 Minimize
 
 $$
@@ -407,13 +420,17 @@ $$
 ** 7
 
 ** 8
+
 *** a
+
 #+begin_src R :results silent
 set.seed(1)
 X <- rnorm(100)
 eps <- rnorm(100)
 #+end_src
+
 *** b
+
 #+begin_src R :results silent
 beta0 <- 1
 beta1 <- 2
@@ -421,7 +438,9 @@ beta2 <- 3
 beta3 <- 4
 Y <- beta0 + beta1 * X + beta2 * X^2 + beta3 * X^3 + eps
 #+end_src
+
 *** c
+
 #+begin_src R :results output :exports both
 data.full <- data.frame(y = Y, x = X)
 regfit.full <- regsubsets(y ~ poly(x, 10, raw = T), data = data.full, nvmax = 10)
@@ -436,16 +455,19 @@ which.max(reg.summary$adjr2)
 : [1] 3
 : [1] 4
 
-#+begin_src R :results output file graphics :file assets/ch06/e8c.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch06/e8c.svg :exports both
 plot(reg.summary$cp, xlab = "Subset Size", ylab = "Cp", pch = 20, type = "l")
 points(4, reg.summary$cp[4], pch = 16, col = "red")
 #+end_src
 
 #+RESULTS:
 [[file:assets/ch06/e8c.svg]]
+
 *** d
+
 *** e
-#+begin_src R :results output file graphics :file assets/ch06/e8e.svg :exports both :width 4 :height 4
+
+#+begin_src R :results output file graphics :file assets/ch06/e8e.svg :exports both
 xmat <- model.matrix(y ~ poly(x, 10, raw = T), data = data.full)[, -1]
 lasso.mod <- cv.glmnet(xmat, Y, alpha = 1)
 best.lambda <- lasso.mod$lambda.min
@@ -454,6 +476,7 @@ plot(lasso.mod)
 
 #+RESULTS:
 [[file:assets/ch06/e8e.svg]]
+
 #+begin_src R :results output :exports both
 best.lambda <- lasso.mod$lambda.min
 lasso.mod <- glmnet(xmat, Y, alpha = 1)
@@ -482,7 +505,9 @@ The lasso prefers low polynomial coefficients, i.e. $X$, $X^2$, and $X^3$.
 ** 9
 
 ** 10
+
 *** a
+
 #+begin_src R :results silent
 set.seed(1)
 p <- 20
@@ -495,7 +520,9 @@ beta[9] <- 0
 eps <- rnorm(p)
 y <- x %*% beta + eps
 #+end_src
+
 *** b
+
 #+begin_src R :results silent
 train <- sample(seq(1000), 100, replace = FALSE)
 y.train <- y[train, ]
@@ -503,8 +530,10 @@ y.test <- y[-train, ]
 x.train <- x[train, ]
 x.test <- x[-train, ]
 #+end_src
+
 *** c
-#+begin_src R :results output file graphics :file assets/ch06/e10c.svg :exports both :width 4 :height 4
+
+#+begin_src R :results output file graphics :file assets/ch06/e10c.svg :exports both
 regfit.full <- regsubsets(y ~ ., data = data.frame(x = x.train, y = y.train), nvmax = p)
 errors.val <- rep(NA, p)
 cols <- colnames(x, do.NULL = FALSE, prefix = "x.")
@@ -517,9 +546,12 @@ plot(errors.val, ylab = "Train MSE", pch = 19, type = "b")
 #+end_src
 
 #+RESULTS:
+
 [[file:assets/ch06/e10c.svg]]
+
 *** d
-#+begin_src R :results output file graphics :file assets/ch06/e10d.svg :exports both :width 4 :height 4
+
+#+begin_src R :results output file graphics :file assets/ch06/e10d.svg :exports both
 errors.val <- rep(NA, p)
 for (i in 1:p) {
     coefi <- coef(regfit.full, id = i)
@@ -531,7 +563,9 @@ plot(errors.val, ylab = "Test MSE", pch = 19, type = "b")
 
 #+RESULTS:
 [[file:assets/ch06/e10d.svg]]
+
 *** e
+
 #+begin_src R :results output :exports both
 which.min(errors.val)
 #+end_src
@@ -540,7 +574,9 @@ which.min(errors.val)
 : [1] 19
 
 The model with 17 predictors has the smallest MSE, equal to the original data.
+
 *** f
+
 #+begin_src R :results output :exports both
 coef(regfit.full, id = 17)
 #+end_src

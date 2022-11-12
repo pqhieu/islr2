@@ -1,6 +1,6 @@
 #+title: Moving Beyond Linearity
 #+startup: showall inlineimages latexpreview
-#+property: header-args:R :session *R* :family "Alegreya Sans"
+#+property: header-args:R :session *R* :family "Alegreya Sans" :width 4 :height 4
 
 
 #+begin_src R :results silent
@@ -10,6 +10,7 @@ attach(Wage)
 #+end_src
 
 * Lab
+
 ** Polynomial Regression and Step Functions
 
 We first fit a linear model using a fourth-degree polynomial.
@@ -38,7 +39,7 @@ se.bands <- cbind(preds$fit + 2 * preds$se.fit, preds$fit - 2 * preds$se.fit)
 
 Finally, we plot the data and add the fit from the degree-4 polynomial.
 
-#+begin_src R :results output file graphics :file assets/ch07/polynomial.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch07/polynomial.svg :exports both
 plot(age, wage, xlim = agelims, cex = .5, col = "darkgrey")
 lines(age.grid, preds$fit, lwd = 2, col = "blue")
 matlines(age.grid, se.bands, lwd = 1, col = "blue", lty = 3)
@@ -70,7 +71,7 @@ se.bands <- exp(se.bands.logit) / (1 + exp(se.bands.logit))
 
 Finally, we can plot the predictions.
 
-#+begin_src R :results output file graphics :file assets/ch07/binomial.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch07/binomial.svg :exports both
 plot(age, I(wage > 250), xlim = agelims, type = "n", ylim = c(0, .2))
 points(jitter(age), I((wage > 250) / 5), cex = .5, pcd = "|", col = "darkgrey")
 lines(age.grid, pfit, lwd = 2, col = "blue")
@@ -82,12 +83,9 @@ matlines(age.grid, se.bands, lwd = 1, col = "blue", lty = 3)
 
 ** Splines
 
-In order to fit regression splines in =R=, we use the =splines= library.
-Here we have specified knots at ages 25, 40, and 60.
-This produces a spline with six basis functions.
-In order to fit a natural spline, we use the =ns()= function.
+In order to fit regression splines in =R=, we use the =splines= library. Here we have specified knots at ages 25, 40, and 60. This produces a spline with six basis functions. In order to fit a natural spline, we use the =ns()= function.
 
-#+begin_src R :results output file graphics :file assets/ch07/splines.svg :exports both :width 4 :height 4
+#+begin_src R :results output file graphics :file assets/ch07/splines.svg :exports both
 fit <- lm(wage ~ bs(age, knots = c(25, 40, 60)), data = Wage)
 pred <- predict(fit, newdata = list(age = age.grid), se = T)
 fit2 <- lm(wage ~ bs(age, df = 4), data = Wage)
@@ -103,14 +101,14 @@ lines(age.grid, pred2$fit, col = "red", lwd = 2)
 [[file:assets/ch07/splines.svg]]
 
 ** GAMs
+
 We now fit a GAM to predict =wage= using natural spline functions of =year= and =age=, treating =education= as a qualitative predictor.
 
 #+begin_src R :results silent
 gam <- lm(wage ~ ns(year, 4) + ns(age, 5) + education, data = Wage)
 #+end_src
 
-We now fit using smoothing splines rather than natural splines.
-We will need to use the =gam= library in =R=.
+We now fit using smoothing splines rather than natural splines. We will need to use the =gam= library in =R=.
 
 #+begin_src R :results output silent
 library(gam)

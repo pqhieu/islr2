@@ -4,7 +4,7 @@
 > in R, 2nd edition", written in R using [org mode](https://orgmode.org).
 
 ## Solutions
-### [Chapter 5](05--resampling-methods.org)
+### [Chapter 5](05-resampling_methods.org)
 - [x] Lab
   - [x] The validation set approach
   - [x] Leave-one-out cross-validation
@@ -20,7 +20,7 @@
   - [ ] Exercise 7
   - [ ] Exercise 8
   - [ ] Exercise 9
-### [Chapter 6](06--regularization-methods.org)
+### [Chapter 6](06-regularization_methods.org)
 - [x] Lab
   - [x] Subset selection methods
   - [x] Ridge regression and the lasso
@@ -37,7 +37,7 @@
   - [ ] Exercise 9
   - [x] Exercise 10
   - [ ] Exercise 11
-### [Chapter 7](07--moving-beyond-linearity.org)
+### [Chapter 7](07-moving_beyond_linearity.org)
 - [x] Lab
   - [x] Polynomial regression and step functions
   - [x] Splines
@@ -55,7 +55,7 @@
   - [ ] Exercise 10
   - [ ] Exercise 11
   - [ ] Exercise 12
-### [Chapter 8](08--tree-based-methods.org)
+### [Chapter 8](08-tree_based_methods.org)
 - [ ] Lab
   - [x] Fitting classification trees
   - [x] Fitting regression trees
